@@ -14,45 +14,44 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("=== Homework 5 Demo: Decorator + Facade ===\n");
 
-        // TODO: Create a hero and a boss with your own meaningful stats.
-        HeroProfile hero = new HeroProfile("TODO Hero", 100);
-        BossEnemy boss = new BossEnemy("TODO Boss", 120, 15);
+        HeroProfile hero = new HeroProfile("Alden", 120);
+        BossEnemy boss = new BossEnemy("Ancient Dragon", 160, 18);
 
-        // TODO: Start with a base action and then create several decorated versions.
-        AttackAction basic = new BasicAttack("Strike", 10);
-        AttackAction enhanced = new FireRuneDecorator(
-                new PoisonCoatingDecorator(
-                        new CriticalFocusDecorator(basic)
-                )
-        );
+        AttackAction basic = new BasicAttack("Sword Slash", 18);
+        AttackAction fire = new FireRuneDecorator(basic);
+        AttackAction firePoison = new PoisonCoatingDecorator(fire);
+        AttackAction firePoisonCritical = new CriticalFocusDecorator(firePoison);
+        AttackAction criticalThenFire = new FireRuneDecorator(new CriticalFocusDecorator(basic));
 
-        System.out.println("--- Decorator Preview ---");
-        System.out.println("Base action: " + basic.getActionName());
-        System.out.println("Base damage: " + basic.getDamage());
-        System.out.println("Base effects: " + basic.getEffectSummary());
-        System.out.println();
-        System.out.println("Enhanced action: " + enhanced.getActionName());
-        System.out.println("Enhanced damage: " + enhanced.getDamage());
-        System.out.println("Enhanced effects: " + enhanced.getEffectSummary());
+        System.out.println("--- Decorator Demo ---");
+        printAction("Base action", basic);
+        printAction("Fire upgrade", fire);
+        printAction("Fire + Poison", firePoison);
+        printAction("Fire + Poison + Critical", firePoisonCritical);
+        printAction("Critical first, then Fire", criticalThenFire);
 
-        // TODO: Replace the placeholder preview above with richer proof of runtime composition.
+        System.out.println("\nThis proves runtime stacking and order-sensitive composition.");
+        System.out.println("Notice that 'Fire + Poison + Critical' and 'Critical first, then Fire' have different damage.");
 
-        System.out.println("\n--- Facade Preview ---");
+        System.out.println("\n--- Facade Dungeon Run ---");
         DungeonFacade facade = new DungeonFacade().setRandomSeed(42L);
-        AdventureResult result = facade.runAdventure(hero, boss, enhanced);
+        AdventureResult result = facade.runAdventure(hero, boss, firePoisonCritical);
 
         System.out.println("Winner: " + result.getWinner());
         System.out.println("Rounds: " + result.getRounds());
         System.out.println("Reward: " + result.getReward());
+        System.out.println("\nAdventure log:");
         for (String line : result.getLog()) {
             System.out.println(line);
         }
 
-        // TODO: Expand this demo so it clearly proves:
-        // 1) multiple decorator combinations
-        // 2) one full dungeon run through the facade
-        // 3) readable final summary
-
         System.out.println("\n=== Demo Complete ===");
+    }
+
+    private static void printAction(String label, AttackAction action) {
+        System.out.println(label + ":");
+        System.out.println("  Name: " + action.getActionName());
+        System.out.println("  Damage: " + action.getDamage());
+        System.out.println("  Effects: " + action.getEffectSummary());
     }
 }
