@@ -2,10 +2,22 @@ package com.narxoz.rpg.facade;
 
 public class RewardService {
     public String determineReward(AdventureResult battleResult) {
-        // TODO: Decide reward rules based on battle outcome.
         if (battleResult == null) {
-            return "TODO";
+            return "No reward";
         }
-        return "TODO";
+
+        if (!battleResult.isHeroWon()) {
+            return "No reward: dungeon failed";
+        }
+
+        if (battleResult.getRounds() <= 3) {
+            return "Legendary chest: 150 gold, 60 XP, Epic Rune";
+        }
+
+        if (battleResult.getRounds() <= 6) {
+            return "Victory reward: 100 gold, 40 XP, Rare Potion";
+        }
+
+        return "Survivor reward: 60 gold, 20 XP";
     }
 }
